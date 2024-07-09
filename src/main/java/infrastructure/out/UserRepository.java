@@ -12,13 +12,13 @@ public class UserRepository implements UserService {
 
     @Override
     public void createUser(User user) {
-        String sql = "INSERT INTO users (name, email) VALUES (?, ?)";
+        String sql = "INSERT INTO user (name, email) VALUES (?, ?)";
 
         try (Connection connection = DatabaseConfig.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(1, user.getName());
+            statement.setString(1, user.getUsername());
             statement.setString(2, user.getEmail());
             statement.executeUpdate();
 
@@ -46,7 +46,7 @@ public class UserRepository implements UserService {
                 if (resultSet.next()) {
                     user = new User();
                     user.setId(resultSet.getLong("id"));
-                    user.setName(resultSet.getString("name"));
+                    user.setUsername(resultSet.getString("name"));
                     user.setEmail(resultSet.getString("email"));
                 }
             }

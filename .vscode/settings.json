@@ -1,6 +1,7 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "conventionalCommits.scopes": [
-        "Ajustado"
+        "Ajustado",
+        "Finalizado"
     ]
 }

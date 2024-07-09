@@ -12,21 +12,16 @@ public class UserRepository implements UserService {
 
     @Override
     public void createUser(User user) {
-        String sql = "INSERT INTO user (name, email) VALUES (?, ?)";
+        String sql = "INSERT INTO user (username, email, password, role) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConfig.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
+            statement.setInt(4, user.getRole());
             statement.executeUpdate();
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    user.setId(generatedKeys.getLong(1));
-                }
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,20 +29,22 @@ public class UserRepository implements UserService {
     }
 
     @Override
-    public User findUserById(Long id) {
-        String sql = "SELECT id, name, email FROM users WHERE id = ?";
+    public User findUserById(int id) {
+        String sql = "SELECT id, username, email, role FROM user WHERE id = ?";
         User user = null;
 
         try (Connection connection = DatabaseConfig.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setLong(1, id);
+            statement.setInt(1, id);
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     user = new User();
-                    user.setId(resultSet.getLong("id"));
-                    user.setUsername(resultSet.getString("name"));
+                    user.setId(resultSet.getInt("id"));
+                    user.setUsername(resultSet.getString("username"));
                     user.setEmail(resultSet.getString("email"));
+                    user.setRole(resultSet.getInt("role"));
                 }
             }
 
